@@ -22,3 +22,6 @@ RESULTS_FILE = "autohedge_runs.jsonl"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 APCA_API_KEY_ID = os.getenv("APCA_API_KEY_ID")
 APCA_API_SECRET_KEY = os.getenv("APCA_API_SECRET_KEY")
+
+# Backtest / UI defaults (NO secrets here)
+DEFAULT_START_CAPITAL = 100_000
