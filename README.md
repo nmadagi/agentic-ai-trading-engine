@@ -124,3 +124,7 @@ This project is for **educational and research purposes only**. It uses paper tr
 ## 👤 Author
 
 **Nitin Madagi** | [GitHub](https://github.com/nmadagi) | [Portfolio](https://nmadagi.github.io/portfolio)
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
