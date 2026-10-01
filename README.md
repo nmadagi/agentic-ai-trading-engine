@@ -1,25 +1,25 @@
-# 🤖 Agentic AI Trading Engine
+# Agentic AI Trading Engine
 
-> A modular, multi-agent AI system for autonomous equity trading — powered by LLM-driven agents, a backtesting engine, real-time market data, and Alpaca paper trading integration.
+> A modular, multi-agent AI system for autonomous equity trading - powered by LLM-driven agents, a backtesting engine, real-time market data, and Alpaca paper trading integration.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit) ![Alpaca](https://img.shields.io/badge/Alpaca-Paper%20Trading-brightgreen) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
 
-## 📌 Overview
+## Overview
 
-The **Agentic AI Trading Engine** is a fully modular Python project that simulates how an autonomous AI system can analyze markets, generate trading signals, manage risk, and execute trades — all without manual intervention.
+The **Agentic AI Trading Engine** is a fully modular Python project that simulates how an autonomous AI system can analyze markets, generate trading signals, manage risk, and execute trades - all without manual intervention.
 
 It combines:
-- 🧠 **LLM-based agentic reasoning** for trade decision-making
-- 📊 **Streamlit dashboard** for live monitoring and control
-- 🔄 **AutoHedge agent** for automated hedge position management
-- 📈 **Backtesting engine** for strategy validation
-- 🏦 **Alpaca paper trading** for simulated order execution
+- **LLM-based agentic reasoning** for trade decision-making
+- **Streamlit dashboard** for live monitoring and control
+- **AutoHedge agent** for automated hedge position management
+- **Backtesting engine** for strategy validation
+- **Alpaca paper trading** for simulated order execution
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 agentic-ai-trading-engine/
@@ -37,20 +37,20 @@ agentic-ai-trading-engine/
 
 ---
 
-## ⚙️ Key Features
+## Key Features
 
 | Feature | Description |
 |---|---|
-| 🤖 Multi-Agent Architecture | Separate agents for signals, hedging, and risk |
-| 📉 Backtesting Engine | Validate strategies on historical data before live trading |
-| 🏦 Alpaca Paper Trading | Execute simulated trades via Alpaca's paper trading API |
-| 🛡️ Risk Management | Configurable stop-loss, position limits, max drawdown controls |
-| 📊 Streamlit Dashboard | Real-time portfolio view, trade log, and P&L charts |
-| 🔀 AutoHedge Agent | Automatically manages hedge positions to offset directional risk |
+| Multi-Agent Architecture | Separate agents for signals, hedging, and risk |
+| Backtesting Engine | Validate strategies on historical data before live trading |
+| Alpaca Paper Trading | Execute simulated trades via Alpaca's paper trading API |
+| Risk Management | Configurable stop-loss, position limits, max drawdown controls |
+| Streamlit Dashboard | Real-time portfolio view, trade log, and P&L charts |
+| AutoHedge Agent | Automatically manages hedge positions to offset directional risk |
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repository
 ```bash
@@ -78,7 +78,7 @@ streamlit run app.py
 
 ---
 
-## 🧠 Agent Architecture
+## Agent Architecture
 
 ```
 ┌────────────────────────────────────┐
@@ -104,27 +104,27 @@ streamlit run app.py
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 - **Python 3.10+**
-- **Streamlit** — Dashboard & UI
-- **Alpaca Trade API** — Paper trading broker
-- **Pandas / NumPy** — Data manipulation
-- **Plotly** — Interactive charts
-- **OpenAI / LLM API** — Agentic trade reasoning
+- **Streamlit** - Dashboard & UI
+- **Alpaca Trade API** - Paper trading broker
+- **Pandas / NumPy** - Data manipulation
+- **Plotly** - Interactive charts
+- **OpenAI / LLM API** - Agentic trade reasoning
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This project is for **educational and research purposes only**. It uses paper trading and synthetic logic. Do not use this for real financial decisions.
 
 ---
 
-## 👤 Author
+## Author
 
 **Nitin Madagi** | [GitHub](https://github.com/nmadagi) | [Portfolio](https://nmadagi.github.io/portfolio)
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).

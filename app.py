@@ -22,7 +22,6 @@ from autohedge_agent import run_autohedge
 
 st.set_page_config(
     page_title="AutoHedge Pro Trading Dashboard",
-    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -72,17 +71,17 @@ st.markdown("""
 # TITLE & HEADER
 # ============================================================================
 
-st.markdown('<h1 class="main-header">🚀 AutoHedge Pro</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">AutoHedge Pro</h1>', unsafe_allow_html=True)
 st.markdown("### AI-Driven Trading & Risk Management System")
 
 st.markdown("""
 **Production Features:**
-- 🧠 **Real-Time Market Data** — RSI, ADX, ATR, Bollinger Bands, Volume Analysis
-- 📊 **Enhanced Backtesting** — Stop-loss/take-profit execution, long/short support
-- 📈 **Risk-Adjusted Metrics** — Sharpe Ratio, Sortino Ratio, Maximum Drawdown
-- 🎯 **AI-Powered Analysis** — Structured trade ideas with Groq LLMs
-- 🔐 **Custom Risk Controls** — Position sizing, notional limits
-- 📡 **Alpaca Integration** — Paper trading execution
+- **Real-Time Market Data** - RSI, ADX, ATR, Bollinger Bands, Volume Analysis
+- **Enhanced Backtesting** - Stop-loss/take-profit execution, long/short support
+- **Risk-Adjusted Metrics** - Sharpe Ratio, Sortino Ratio, Maximum Drawdown
+- **AI-Powered Analysis** - Structured trade ideas with Groq LLMs
+- **Custom Risk Controls** - Position sizing, notional limits
+- **Alpaca Integration** - Paper trading execution
 """)
 
 # ============================================================================
@@ -95,7 +94,7 @@ df_all = load_runs()
 # SIDEBAR - FILTERS
 # ============================================================================
 
-st.sidebar.header("🔍 Filters & Settings")
+st.sidebar.header("Filters & Settings")
 
 selected_stock = None
 df = df_all.copy()
@@ -111,7 +110,7 @@ else:
     
     if available_stocks:
         selected_stock = st.sidebar.selectbox(
-            "📊 Select Stock",
+            "Select Stock",
             options=["All"] + available_stocks,
             index=0
         )
@@ -126,7 +125,7 @@ else:
         
         if pd.notna(min_date) and pd.notna(max_date):
             date_range = st.sidebar.date_input(
-                "📅 Date Range",
+                "Date Range",
                 value=[min_date.date(), max_date.date()],
                 max_value=datetime.now().date()
             )
@@ -139,7 +138,7 @@ else:
                 ]
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📊 Dashboard Stats")
+st.sidebar.markdown("### Dashboard Stats")
 if not df_all.empty:
     st.sidebar.metric("Total Runs", len(df_all))
     if "custom_risk_approved" in df_all.columns:
@@ -151,11 +150,11 @@ if not df_all.empty:
 # ============================================================================
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🧠 Latest Analysis",
-    "📜 History",
-    "📈 Backtest",
-    "📡 Alpaca",
-    "⚙️ New Run"
+    "Latest Analysis",
+    "History",
+    "Backtest",
+    "Alpaca",
+    "New Run"
 ])
 
 # ============================================================================
@@ -163,7 +162,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # ============================================================================
 
 with tab1:
-    st.markdown("## 🧠 Latest AutoHedge Analysis")
+    st.markdown("## Latest AutoHedge Analysis")
     
     if df.empty or (selected_stock == "All" and not df_all.empty):
         st.info("Select a specific stock from the sidebar to view detailed analysis.")
@@ -179,7 +178,7 @@ with tab1:
         with col_h2:
             st.markdown(f"**Run:** {latest['run_time'].strftime('%Y-%m-%d %H:%M')}")
         with col_h3:
-            risk_status = "✅ Approved" if latest.get("custom_risk_approved") else "❌ Rejected"
+            risk_status = "Approved" if latest.get("custom_risk_approved") else "Rejected"
             st.markdown(f"**Risk:** {risk_status}")
         
         # Market Data Snapshot
@@ -187,7 +186,7 @@ with tab1:
             md = latest["market_data_snapshot"]
             
             if "error" not in md:
-                st.markdown("#### 📊 Market Data Snapshot")
+                st.markdown("#### Market Data Snapshot")
                 col_m1, col_m2, col_m3, col_m4 = st.columns(4)
                 
                 with col_m1:
@@ -213,12 +212,12 @@ with tab1:
         st.markdown("---")
         
         # Thesis
-        st.markdown("#### 💡 Investment Thesis")
+        st.markdown("#### Investment Thesis")
         thesis = latest.get("thesis", "No thesis available")
         st.markdown(f'<div class="metric-card">{thesis}</div>', unsafe_allow_html=True)
         
         # Quant Analysis
-        st.markdown("#### 📈 Quantitative Analysis")
+        st.markdown("#### Quantitative Analysis")
         qa = latest.get("quant_analysis", {})
         
         if isinstance(qa, dict) and qa:
@@ -256,7 +255,7 @@ with tab1:
         st.markdown("---")
         
         # Risk Assessment
-        st.markdown("#### ⚠️ Risk Assessment")
+        st.markdown("#### Risk Assessment")
         ra = latest.get("risk_assessment", {})
         
         if isinstance(ra, dict) and ra:
@@ -278,7 +277,7 @@ with tab1:
         st.markdown("---")
         
         # Order Details
-        st.markdown("#### 📋 Recommended Order")
+        st.markdown("#### Recommended Order")
         
         col_o1, col_o2 = st.columns([2, 1])
         with col_o1:
@@ -286,9 +285,9 @@ with tab1:
             reason = latest.get('custom_risk_reason', 'N/A')
             
             if approved:
-                st.markdown(f'<div class="success-box"><strong>✅ Risk Check: APPROVED</strong><br>{reason}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="success-box"><strong>Risk Check: APPROVED</strong><br>{reason}</div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="warning-box"><strong>❌ Risk Check: REJECTED</strong><br>{reason}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="warning-box"><strong>Risk Check: REJECTED</strong><br>{reason}</div>', unsafe_allow_html=True)
         
         # Order metrics
         col_ord1, col_ord2, col_ord3 = st.columns(3)
@@ -313,17 +312,17 @@ with tab1:
         
         # Execute on Alpaca
         st.markdown("---")
-        st.markdown("#### 🚀 Execute Trade")
+        st.markdown("#### Execute Trade")
         
         col_exec1, col_exec2 = st.columns([3, 1])
         with col_exec1:
-            st.info("⚠️ This will place a LIVE order on your Alpaca paper trading account.")
+            st.info("This will place a LIVE order on your Alpaca paper trading account.")
         with col_exec2:
-            if st.button("📤 Send to Alpaca", type="primary", use_container_width=True):
+            if st.button("Send to Alpaca", type="primary", use_container_width=True):
                 if not latest.get("order_side") or not latest.get("order_quantity"):
                     st.error("Order missing required fields.")
                 elif not latest.get("custom_risk_approved"):
-                    st.warning("⚠️ Order not approved by risk controls!")
+                    st.warning("Order not approved by risk controls!")
                 else:
                     try:
                         placed = alpaca_place_market_order(
@@ -331,16 +330,16 @@ with tab1:
                             side=str(latest["order_side"]),
                             qty=float(latest["order_quantity"])
                         )
-                        st.success(f"✅ Order placed! ID: {placed.id}")
+                        st.success(f"Order placed! ID: {placed.id}")
                     except Exception as e:
-                        st.error(f"❌ Error: {e}")
+                        st.error(f"Error: {e}")
 
 # ============================================================================
 # TAB 2: HISTORY
 # ============================================================================
 
 with tab2:
-    st.markdown("## 📜 Historical Runs")
+    st.markdown("## Historical Runs")
     
     if df_all.empty:
         st.info("No historical runs yet.")
@@ -391,7 +390,7 @@ with tab2:
 # ============================================================================
 
 with tab3:
-    st.markdown("## 📈 Enhanced Backtest Engine")
+    st.markdown("## Enhanced Backtest Engine")
     
     if df.empty or selected_stock is None or selected_stock == "All":
         st.info("Select a specific stock from the sidebar to run backtest.")
@@ -427,7 +426,7 @@ with tab3:
                 step=1
             )
         
-        if st.button("🚀 Run Backtest", type="primary", use_container_width=True):
+        if st.button("Run Backtest", type="primary", use_container_width=True):
             with st.spinner("Running backtest with stop-loss/take-profit logic..."):
                 metrics, trades_df, equity_series = run_enhanced_backtest(
                     df_runs=df,
@@ -440,7 +439,7 @@ with tab3:
             if metrics is None:
                 st.warning("No valid trade signals to backtest.")
             else:
-                st.markdown("### 📊 Performance Metrics")
+                st.markdown("### Performance Metrics")
                 
                 # Main metrics
                 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -463,7 +462,7 @@ with tab3:
                 with col_m5:
                     st.metric("Trades", metrics['num_trades'])
                 
-                st.markdown("### 📉 Risk-Adjusted Performance")
+                st.markdown("### Risk-Adjusted Performance")
                 
                 col_r1, col_r2, col_r3 = st.columns(3)
                 
@@ -487,7 +486,7 @@ with tab3:
                 
                 # Exit breakdown
                 if 'exit_breakdown' in metrics and metrics['exit_breakdown']:
-                    st.markdown("### 🎯 Exit Analysis")
+                    st.markdown("### Exit Analysis")
                     exit_data = pd.DataFrame([
                         {"Exit Type": k, "Count": v}
                         for k, v in metrics['exit_breakdown'].items()
@@ -500,11 +499,11 @@ with tab3:
                         st.bar_chart(exit_data.set_index("Exit Type"))
                 
                 # Equity curve
-                st.markdown("### 📈 Equity Curve")
+                st.markdown("### Equity Curve")
                 st.line_chart(equity_series)
                 
                 # Trade log
-                st.markdown("### 📋 Trade Log")
+                st.markdown("### Trade Log")
                 trades_display = trades_df[[
                     'run_time', 'side', 'entry_price', 'exit_price',
                     'stop_loss', 'take_profit', 'pnl', 'return_pct', 'exit_reason'
@@ -521,7 +520,7 @@ with tab3:
 # ============================================================================
 
 with tab4:
-    st.markdown("## 📡 Alpaca Paper Trading Account")
+    st.markdown("## Alpaca Paper Trading Account")
     
     try:
         acct = alpaca_get_account()
@@ -548,7 +547,7 @@ with tab4:
         positions = alpaca_get_positions()
         
         if positions:
-            st.markdown("### 📊 Open Positions")
+            st.markdown("### Open Positions")
             
             pos_data = []
             for p in positions:
@@ -572,7 +571,7 @@ with tab4:
 # ============================================================================
 
 with tab5:
-    st.markdown("## ⚙️ Run New AutoHedge Analysis")
+    st.markdown("## Run New AutoHedge Analysis")
     
     with st.form("new_run_form"):
         st.markdown("### Configuration")
@@ -628,7 +627,7 @@ with tab5:
             )
         
         submitted = st.form_submit_button(
-            "🚀 Run AutoHedge Analysis",
+            "Run AutoHedge Analysis",
             type="primary",
             use_container_width=True
         )
@@ -650,7 +649,7 @@ with tab5:
                         max_risk_pct=max_risk / 100.0
                     )
                     
-                    st.success("✅ Analysis completed and saved!")
+                    st.success("Analysis completed and saved!")
                     
                     # Show key results
                     col_res1, col_res2 = st.columns(2)
@@ -660,19 +659,19 @@ with tab5:
                         st.write(f"**Stock:** {result.get('current_stock')}")
                         st.write(f"**Side:** {result.get('order_side')}")
                         st.write(f"**Entry:** ${result.get('order_entry_price', 0):.2f}")
-                        st.write(f"**Risk Approved:** {'✅ Yes' if result.get('custom_risk_approved') else '❌ No'}")
+                        st.write(f"**Risk Approved:** {'Yes' if result.get('custom_risk_approved') else 'No'}")
                     
                     with col_res2:
                         st.markdown("#### Thesis")
                         st.write(result.get('thesis', 'No thesis'))
                     
-                    with st.expander("📄 View Full JSON Output"):
+                    with st.expander("View Full JSON Output"):
                         st.json(result)
                     
-                    st.info("💡 Go to 'Latest Analysis' tab to see full details, or select the stock from sidebar.")
+                    st.info("Go to 'Latest Analysis' tab to see full details, or select the stock from sidebar.")
                     
                 except Exception as e:
-                    st.error(f"❌ Error running AutoHedge: {e}")
+                    st.error(f"Error running AutoHedge: {e}")
                     st.exception(e)
 
 # ============================================================================
@@ -682,8 +681,8 @@ with tab5:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
-    <p><strong>AutoHedge Pro</strong> — AI-Driven Trading & Risk Management System</p>
+    <p><strong>AutoHedge Pro</strong> - AI-Driven Trading & Risk Management System</p>
     <p>Built with Streamlit • Powered by Groq LLMs • Alpaca Paper Trading</p>
-    <p style='font-size: 0.8em;'>⚠️ For educational and research purposes only. Not financial advice.</p>
+    <p style='font-size: 0.8em;'>For educational and research purposes only. Not financial advice.</p>
 </div>
 """, unsafe_allow_html=True)
