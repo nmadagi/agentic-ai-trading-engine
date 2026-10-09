@@ -14,12 +14,16 @@ def fetch_market_data_context(ticker: str, days_back: int = 30) -> dict:
     """
     try:
         end = datetime.now()
-        start = end - timedelta(days=days_back + 20)
+        # 50-day SMA and 14-day ADX need about 65 trading days of history
+        start = end - timedelta(days=days_back + 90)
         
-        df = yf.download(ticker, start=start, end=end, progress=False)
+        df = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=True)
         
         if df.empty:
             return {"error": f"No data available for {ticker}"}
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+        df = df.dropna(subset=['Close'])   # drop a partial bar for today
         
         close = df['Close']
         high = df['High']
@@ -59,7 +63,7 @@ def fetch_market_data_context(ticker: str, days_back: int = 30) -> dict:
         atr_14 = true_range.rolling(window=14).mean()
         plus_di = 100 * (plus_dm.rolling(window=14).mean() / atr_14)
         minus_di = 100 * (minus_dm.rolling(window=14).mean() / atr_14)
-        dx = (abs(plus_di - minus_di) / (plus_pi + minus_di)) * 100
+        dx = (abs(plus_di - minus_di) / (plus_di + minus_di)) * 100
         adx = dx.rolling(window=14).mean()
         
         latest_data = {
@@ -85,8 +89,11 @@ def fetch_market_data_context(ticker: str, days_back: int = 30) -> dict:
         
         # Fetch SPY for market context
         try:
-            spy = yf.download("SPY", start=start, end=end, progress=False)
+            spy = yf.download("SPY", start=start, end=end, progress=False, auto_adjust=True)
             if not spy.empty:
+                if isinstance(spy.columns, pd.MultiIndex):
+                    spy.columns = spy.columns.get_level_values(0)
+                spy = spy.dropna(subset=['Close'])
                 spy_change = (spy['Close'].iloc[-1] / spy['Close'].iloc[-2] - 1) * 100
                 latest_data["spy_change_pct"] = float(spy_change)
         except:
@@ -105,32 +112,39 @@ def format_market_data_for_llm(market_data: dict) -> str:
     if "error" in market_data:
         return f"Market data unavailable: {market_data['error']}"
     
+    def money(v):
+        return f"${v:.2f}" if v is not None else "N/A"
+
+    def num(v):
+        return f"{v:.2f}" if v is not None else "N/A"
+
+    m = market_data
     text = f"""
-REAL-TIME MARKET DATA FOR {market_data['ticker']}:
+REAL-TIME MARKET DATA FOR {m['ticker']}:
 
-Current Price: ${market_data['current_price']:.2f} ({market_data['price_change_pct']:+.2f}% from previous close)
+Current Price: ${m['current_price']:.2f} ({m['price_change_pct']:+.2f}% from previous close)
 
-Last 10 Trading Days Closes: {', '.join([f'${x:.2f}' for x in market_data['recent_closes']])}
+Last 10 Trading Days Closes: {', '.join([f'${x:.2f}' for x in m['recent_closes']])}
 
 TECHNICAL INDICATORS:
-- RSI (14-day): {market_data['rsi_14']:.2f if market_data['rsi_14'] else 'N/A'}
-- SMA (20-day): ${market_data['sma_20']:.2f if market_data['sma_20'] else 'N/A'}
-- SMA (50-day): ${market_data['sma_50']:.2f if market_data['sma_50'] else 'N/A'}
-- EMA (20-day): ${market_data['ema_20']:.2f if market_data['ema_20'] else 'N/A'}
-- Bollinger Bands: Upper ${market_data['bb_upper']:.2f if market_data['bb_upper'] else 'N/A'}, Lower ${market_data['bb_lower']:.2f if market_data['bb_lower'] else 'N/A'}
+- RSI (14-day): {num(m['rsi_14'])}
+- SMA (20-day): {money(m['sma_20'])}
+- SMA (50-day): {money(m['sma_50'])}
+- EMA (20-day): {money(m['ema_20'])}
+- Bollinger Bands: Upper {money(m['bb_upper'])}, Lower {money(m['bb_lower'])}
 
 VOLATILITY & MOMENTUM:
-- ATR (14-day): ${market_data['atr_14']:.2f if market_data['atr_14'] else 'N/A'}
-- ADX (14-day): {market_data['adx_14']:.2f if market_data['adx_14'] else 'N/A'} (trend strength)
+- ATR (14-day): {money(m['atr_14'])}
+- ADX (14-day): {num(m['adx_14'])} (trend strength)
 
 VOLUME ANALYSIS:
-- Current Volume: {market_data['current_volume']:,.0f}
-- 20-day Avg Volume: {market_data['avg_volume_20d']:,.0f}
-- Volume Ratio: {market_data['volume_ratio']:.2f}x average
+- Current Volume: {m['current_volume']:,.0f}
+- 20-day Avg Volume: {m['avg_volume_20d']:,.0f}
+- Volume Ratio: {m['volume_ratio']:.2f}x average
 
 KEY LEVELS:
-- Resistance: ${market_data['resistance_level']:.2f}
-- Support: ${market_data['support_level']:.2f}
+- Resistance: ${m['resistance_level']:.2f}
+- Support: ${m['support_level']:.2f}
 """
     
     if 'spy_change_pct' in market_data:
@@ -143,5 +157,7 @@ def get_yfinance_price_series(ticker: str, days_back: int = 60):
     """Get historical price data for charting."""
     end = datetime.now()
     start = end - timedelta(days=days_back)
-    df = yf.download(ticker, start=start, end=end, progress=False)
+    df = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=True)
+    if not df.empty and isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
     return None if df.empty else df
