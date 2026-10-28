@@ -4,6 +4,9 @@ Complete Streamlit Dashboard for AutoHedge Pro
 Run with: streamlit run app.py
 """
 
+import hmac
+import os
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -15,6 +18,25 @@ from alpaca_trading import alpaca_place_market_order, alpaca_get_positions, alpa
 from data_manager import load_runs
 from backtest_engine import run_enhanced_backtest
 from autohedge_agent import run_autohedge
+
+
+def operator_unlocked() -> bool:
+    """Gate paid and account actions (Groq calls, Alpaca orders, account view).
+
+    Locked unless OPERATOR_PASSWORD is configured AND entered in the sidebar,
+    so a public deployment can show saved runs and backtests without letting
+    visitors spend API credits or trade the paper account.
+    """
+    expected = os.getenv("OPERATOR_PASSWORD", "")
+    if not expected:
+        return False
+    entered = st.sidebar.text_input("Operator password", type="password", key="operator_pw")
+    return bool(entered) and hmac.compare_digest(entered.encode(), expected.encode())
+
+
+def risk_approved(value) -> bool:
+    """True only for a real boolean True (NaN/None/'False' from the runs file are not approval)."""
+    return str(value).strip().lower() == "true"
 
 # ============================================================================
 # PAGE CONFIGURATION
@@ -94,6 +116,9 @@ df_all = load_runs()
 # SIDEBAR - FILTERS
 # ============================================================================
 
+OPERATOR = operator_unlocked()
+if not OPERATOR:
+    st.sidebar.caption("Public demo: AI runs and Alpaca actions are locked.")
 st.sidebar.header("Filters & Settings")
 
 selected_stock = None
@@ -318,15 +343,20 @@ with tab1:
         with col_exec1:
             st.info("This will place a LIVE order on your Alpaca paper trading account.")
         with col_exec2:
-            if st.button("Send to Alpaca", type="primary", use_container_width=True):
+            if not OPERATOR:
+                st.caption("Locked on public demo")
+            elif st.button("Send to Alpaca", type="primary", use_container_width=True):
+                order_symbol = latest.get("current_stock")
                 if not latest.get("order_side") or not latest.get("order_quantity"):
                     st.error("Order missing required fields.")
-                elif not latest.get("custom_risk_approved"):
+                elif not risk_approved(latest.get("custom_risk_approved")):
                     st.warning("Order not approved by risk controls!")
+                elif not order_symbol:
+                    st.error("Latest run has no stock symbol.")
                 else:
                     try:
                         placed = alpaca_place_market_order(
-                            symbol=selected_stock,
+                            symbol=str(order_symbol),
                             side=str(latest["order_side"]),
                             qty=float(latest["order_quantity"])
                         )
@@ -522,11 +552,15 @@ with tab3:
 with tab4:
     st.markdown("## Alpaca Paper Trading Account")
     
-    try:
-        acct = alpaca_get_account()
-    except Exception as e:
+    if not OPERATOR:
         acct = None
-        st.error(f"Could not connect to Alpaca: {e}")
+        st.info("Disabled on the public demo: enter the operator password in the sidebar.")
+    else:
+        try:
+            acct = alpaca_get_account()
+        except Exception as e:
+            acct = None
+            st.error(f"Could not connect to Alpaca: {e}")
     
     if acct:
         # Account metrics
@@ -635,8 +669,12 @@ with tab5:
     if submitted:
         tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
         
-        if not tickers:
+        if not OPERATOR:
+            st.error("Disabled on the public demo: enter the operator password in the sidebar.")
+        elif not tickers:
             st.error("Please provide at least one valid ticker.")
+        elif len(tickers) > 3:
+            st.error("At most 3 tickers per run.")
         else:
             with st.spinner(f"Analyzing {', '.join(tickers)}... Fetching market data and running AI analysis..."):
                 try:

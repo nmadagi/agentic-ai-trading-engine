@@ -22,7 +22,15 @@ def alpaca_place_market_order(symbol: str, side: str, qty: float):
     if client is None:
         raise RuntimeError("Alpaca API keys not set.")
     
-    side_enum = OrderSide.BUY if side.upper() in ["BUY", "LONG"] else OrderSide.SELL
+    side_u = str(side).strip().upper()
+    if side_u in ("BUY", "LONG"):
+        side_enum = OrderSide.BUY
+    elif side_u in ("SELL", "SHORT"):
+        side_enum = OrderSide.SELL
+    else:
+        raise ValueError(f"Refusing to send order with side '{side}'.")
+    if not qty or float(qty) <= 0:
+        raise ValueError("Refusing to send order with non-positive quantity.")
     order_req = MarketOrderRequest(
         symbol=symbol,
         qty=qty,

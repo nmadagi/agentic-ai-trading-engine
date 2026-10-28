@@ -11,7 +11,7 @@ load_dotenv()
 
 # Load environment variables from Streamlit secrets or .env
 for key in ["GROQ_API_KEY", "WORKSPACE_DIR", "APCA_API_KEY_ID", 
-            "APCA_API_SECRET_KEY", "APCA_API_BASE_URL"]:
+            "APCA_API_SECRET_KEY", "APCA_API_BASE_URL", "OPERATOR_PASSWORD"]:
     try:
         if key in st.secrets and not os.getenv(key):
             os.environ[key] = st.secrets[key]
